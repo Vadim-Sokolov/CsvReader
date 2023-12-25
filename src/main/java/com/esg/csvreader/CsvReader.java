@@ -19,7 +19,6 @@ public class CsvReader {
             reader = new FileReader(PropertyLoader.PROPERTIES.getProperty("csvFilePath"), StandardCharsets.UTF_8);
             csvReader = new CSVReader(reader);
 
-            String[] nextLine;
             csvReader.readAll().stream()
                     .map(Arrays::asList)
                     .forEach(row -> {
