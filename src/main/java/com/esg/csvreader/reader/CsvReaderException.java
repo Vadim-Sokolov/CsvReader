@@ -1,4 +1,4 @@
-package com.esg.csvreader;
+package com.esg.csvreader.reader;
 
 public class CsvReaderException extends Exception {
     public CsvReaderException(String message) {

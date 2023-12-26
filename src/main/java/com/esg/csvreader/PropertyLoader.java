@@ -1,12 +1,14 @@
 package com.esg.csvreader;
 
+import com.esg.csvreader.reader.CsvReaderException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 public class PropertyLoader {
 
-    public static Properties PROPERTIES = new Properties();
+    public static final Properties PROPERTIES = new Properties();
 
     static {
         try (InputStream input = CsvReaderApplication.class.getClassLoader().getResourceAsStream("application.properties")) {
