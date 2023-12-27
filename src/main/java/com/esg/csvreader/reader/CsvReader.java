@@ -16,14 +16,11 @@ public class CsvReader {
 
     private static final String CSV_FILE_PATH = "csvFilePath";
 
-    public List<String> readCsvFile() throws CsvReaderException, IOException {
+    public List<String> readCsvFile() throws CsvReaderException {
 
-        Reader reader = null;
-        CSVReader csvReader = null;
         var listOfJsonStrings = new ArrayList<String>();
-        try {
-            reader = new FileReader(PropertyLoader.PROPERTIES.getProperty(CSV_FILE_PATH), StandardCharsets.UTF_8);
-            csvReader = new CSVReader(reader);
+        try (Reader reader = new FileReader(PropertyLoader.PROPERTIES.getProperty(CSV_FILE_PATH), StandardCharsets.UTF_8);
+             CSVReader csvReader = new CSVReader(reader)) {
 
             csvReader.readAll().stream()
                     .skip(1)
@@ -35,13 +32,9 @@ public class CsvReader {
                             throw new RuntimeException(e);
                         }
                     });
+
         } catch (Exception e) {
             throw new CsvReaderException(e.getMessage());
-        } finally {
-            if (csvReader != null) {
-                csvReader.close();
-                reader.close();
-            }
         }
         return listOfJsonStrings;
     }
