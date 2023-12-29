@@ -6,16 +6,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserInterface implements CommandLineRunner {
 
-    private final UserInterfaceService userInterfaceService;
+    private final ConsoleService consoleService;
 
-    public UserInterface(UserInterfaceService userInterfaceService) {
-        this.userInterfaceService = userInterfaceService;
+    public UserInterface(ConsoleService consoleService) {
+        this.consoleService = consoleService;
     }
 
     @Override
     public void run(String... args) throws Exception {
         printGreeting();
-        userInterfaceService.listenToConsole();
+        consoleService.listenToConsole();
     }
 
     private void printGreeting() {

@@ -1,4 +1,4 @@
-package com.esg.csvreader.service;
+package com.esg.csvreader.apiservice;
 
 public class ApiServiceException extends Exception {
     public ApiServiceException(String message) {

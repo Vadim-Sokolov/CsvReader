@@ -1,18 +1,24 @@
-package com.esg.csvreader.service;
+package com.esg.csvreader.apiservice;
 
 import com.esg.csvreader.PropertyLoader;
 import org.springframework.http.*;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-public class ApiServiceImpl {
+@Service
+public class ApiService {
 
     private static final String POST_URL = PropertyLoader.PROPERTIES.getProperty("postEndPoint");
     private static final String GET_URL = PropertyLoader.PROPERTIES.getProperty("getEndPoint");
     private final RestTemplate restTemplate;
 
-    public ApiServiceImpl(RestTemplate restTemplate) {
+    public ApiService() {
+        this.restTemplate = new RestTemplate();
+    }
+
+    public ApiService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 

@@ -1,4 +1,4 @@
-package com.esg.csvreader.service;
+package com.esg.csvreader.apiservice;
 
 import com.esg.csvreader.PropertyLoader;
 import org.junit.jupiter.api.Assertions;
@@ -18,12 +18,12 @@ import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class ApiServiceImplTest {
+class ApiServiceTest {
 
     private static final String POST_URL = PropertyLoader.PROPERTIES.getProperty("postEndPoint");
     private static final String GET_URL = PropertyLoader.PROPERTIES.getProperty("getEndPoint");
     private final RestTemplate restTemplate = mock(RestTemplate.class);
-    private final ApiServiceImpl apiService = new ApiServiceImpl(restTemplate);
+    private final ApiService apiService = new ApiService(restTemplate);
 
     @Test
     void shouldPostAllTheItemsOnTheList() {
