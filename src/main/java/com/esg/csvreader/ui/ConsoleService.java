@@ -139,12 +139,12 @@ public class ConsoleService {
         keepRunning = false;
     }
 
-    public boolean isKeepRunning() {
-        return keepRunning;
-    }
-
     private void printListOfCommands() {
         System.out.println("Here are your options: ");
         CONSOLE_COMMAND.forEach(System.out::println);
     }
-}
+
+    public boolean shouldKeepRunning() {
+        return keepRunning;
+    }
+ }

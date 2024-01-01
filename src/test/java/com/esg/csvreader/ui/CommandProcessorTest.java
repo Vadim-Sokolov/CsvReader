@@ -3,6 +3,7 @@ package com.esg.csvreader.ui;
 import com.esg.csvreader.CommandProcessor;
 import com.esg.csvreader.apiservice.ApiService;
 import com.esg.csvreader.apiservice.ApiServiceException;
+import com.esg.csvreader.dto.CustomerDto;
 import com.esg.csvreader.reader.CsvReader;
 import com.esg.csvreader.reader.CsvReaderException;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ class CommandProcessorTest {
     @Test
     void readFile_shouldReadCsvFileCorrectly() throws CsvReaderException {
         // GIVEN
-        var expected = List.of("line1", "line2");
+        var expected = List.of(new CustomerDto(), new CustomerDto());
         when(mockReader.readCsvFile()).thenReturn(expected);
 
         // WHEN
@@ -35,15 +36,15 @@ class CommandProcessorTest {
     @Test
     void testPostContentToRemote() throws CsvReaderException {
         // GIVEN
-        var stringList = List.of("line1", "line2");
-        when(mockReader.readCsvFile()).thenReturn(stringList);
+        var customerList = List.of(new CustomerDto(), new CustomerDto());
+        when(mockReader.readCsvFile()).thenReturn(customerList);
 
         // WHEN
         commandProcessor.postContentToRemote();
 
         // THEN
         verify(mockReader, times(1)).readCsvFile();
-        verify(mockApiService, times(1)).postFileContentsToServerDatabase(stringList);
+        verify(mockApiService, times(1)).postCustomersToRemote(customerList);
     }
 
     @Test

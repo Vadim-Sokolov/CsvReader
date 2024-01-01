@@ -2,7 +2,7 @@ package com.esg.csvreader.reader;
 
 import com.esg.csvreader.CommandProcessor;
 import com.esg.csvreader.PropertyLoader;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.esg.csvreader.dto.CustomerDto;
 import com.opencsv.CSVReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,9 +21,9 @@ public class CsvReader {
     private static final Logger logger = LogManager.getLogger(CommandProcessor.class);
     private static final String CSV_FILE_PATH = "csvFilePath";
 
-    public List<String> readCsvFile() throws CsvReaderException {
+    public List<CustomerDto> readCsvFile() throws CsvReaderException {
 
-        var listOfJsonStrings = new ArrayList<String>();
+        var customerDtos = new ArrayList<CustomerDto>();
         try (Reader reader = new FileReader(PropertyLoader.PROPERTIES.getProperty(CSV_FILE_PATH), StandardCharsets.UTF_8);
              CSVReader csvReader = new CSVReader(reader)) {
 
@@ -33,7 +33,7 @@ public class CsvReader {
                     .map(Arrays::asList)
                     .forEach(row -> {
                         try {
-                            listOfJsonStrings.add(convertRowToJson(row));
+                            customerDtos.add(convertRowToCustomerDto(row));
                         } catch (CsvReaderException e) {
                             throw new RuntimeException(e);
                         }
@@ -43,17 +43,28 @@ public class CsvReader {
             logger.error("Could not read csv file: " + e.getMessage());
             throw new CsvReaderException(e.getMessage());
         }
-        logger.debug("Csv file read and converted to JSON");
-        return listOfJsonStrings;
+        logger.debug("Csv file read and converted to CustomerDto");
+        return customerDtos;
     }
 
-    private String convertRowToJson(List<String> row) throws CsvReaderException {
-        var objectMapper = new ObjectMapper();
+    private CustomerDto convertRowToCustomerDto(List<String> row) throws CsvReaderException {
         try {
-            return objectMapper.writeValueAsString(row);
+            if (row.size() < 8) {
+                throw new CsvReaderException("Invalid number of elements in the row");
+            }
+            return CustomerDto.builder()
+                    .customerRef(Integer.parseInt(row.get(0)))
+                    .customerName(row.get(1))
+                    .addressLine1(row.get(2))
+                    .addressLine2(row.get(3))
+                    .town(row.get(4))
+                    .county(row.get(5))
+                    .country(row.get(6))
+                    .postcode(row.get(7))
+                    .build();
         } catch (Exception e) {
-            logger.error("Could not convert row to JSON");
-            throw new CsvReaderException("Could not convert row to JSON " + e.getMessage());
+            logger.error("Could not convert row to CustomerDto");
+            throw new CsvReaderException("Could not convert row to CustomerDto " + e.getMessage());
         }
     }
 }

@@ -63,6 +63,6 @@ class ConsoleServiceTest {
 
         // THEN
         verify(mockReader, times(1)).close();
-        assertFalse(listener.isKeepRunning());
+        assertFalse(listener.shouldKeepRunning());
     }
 }

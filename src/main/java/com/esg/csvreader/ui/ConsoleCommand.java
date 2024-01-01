@@ -1,9 +1,12 @@
 package com.esg.csvreader.ui;
 
+import lombok.Getter;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Getter
 public enum ConsoleCommand {
     READ_FILE("Read file"),
     POST_FILE_CONTENTS("Post file"),
@@ -14,10 +17,6 @@ public enum ConsoleCommand {
 
     ConsoleCommand(String commandValue) {
         this.commandValue = commandValue;
-    }
-
-    public String getCommandValue() {
-        return commandValue;
     }
 
     public static List<String> getAllCommandValues() {

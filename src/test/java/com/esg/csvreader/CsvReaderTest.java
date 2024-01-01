@@ -1,5 +1,6 @@
 package com.esg.csvreader;
 
+import com.esg.csvreader.dto.CustomerDto;
 import com.esg.csvreader.reader.CsvReader;
 import com.esg.csvreader.reader.CsvReaderException;
 import org.junit.jupiter.api.Test;
@@ -14,25 +15,22 @@ class CsvReaderTest {
     void shouldReadCsvFileCorrectly() throws CsvReaderException {
         // GIVEN
         var expectedSize = 5;
-        var expectedJsonString = "[\"234\",\"Joe Bloggs\",\"3 Quebeck Street\",\"\",\"Lindon\",\"Shropshire\",\"UK\",\"RW1 2BK\"]";
+        var expectedCustomerDto = CustomerDto.builder()
+                .customerRef(Integer.parseInt("234"))
+                .customerName("Joe Bloggs")
+                .addressLine1("3 Quebeck Street")
+                .addressLine2("")
+                .town("Lindon")
+                .county("Shropshire")
+                .country("UK")
+                .postcode("RW1 2BK")
+                .build();
 
         // WHEN
         var actual = reader.readCsvFile();
 
         // THEN
         assertEquals(expectedSize, actual.size());
-        assertTrue(actual.contains(expectedJsonString));
-    }
-
-    @Test
-    void shouldSkipFirstRow() throws CsvReaderException {
-        // GIVEN
-        var expected = "[\"Customer Ref\",\"Customer Name\",\"Address Line 1\",\"Address Line 2\",\"Town\",\"County\",\"Country\",\"Postcode\"]";
-
-        // WHEN
-        var actual = reader.readCsvFile();
-
-        // THEN
-        assertFalse(actual.contains(expected));
+        assertTrue(actual.contains(expectedCustomerDto));
     }
 }

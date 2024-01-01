@@ -1,6 +1,7 @@
 package com.esg.csvreader.apiservice;
 
 import com.esg.csvreader.PropertyLoader;
+import com.esg.csvreader.dto.CustomerDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -28,13 +29,13 @@ class ApiServiceTest {
     @Test
     void shouldPostAllTheItemsOnTheList() {
         // GIVEN
-        var contents = Arrays.asList("Record1", "Record2", "Record3");
+        var customers = Arrays.asList(new CustomerDto(), new CustomerDto(), new CustomerDto());
 
         // WHEN
-        apiService.postFileContentsToServerDatabase(contents);
+        apiService.postCustomersToRemote(customers);
 
         // THEN
-        Mockito.verify(restTemplate, Mockito.times(contents.size()))
+        Mockito.verify(restTemplate, Mockito.times(customers.size()))
                 .postForObject(eq(POST_URL), Mockito.any(HttpEntity.class), eq(String.class));
 
     }

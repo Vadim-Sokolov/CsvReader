@@ -1,6 +1,7 @@
 package com.esg.csvreader.apiservice;
 
 import com.esg.csvreader.PropertyLoader;
+import com.esg.csvreader.dto.CustomerDto;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -22,12 +23,12 @@ public class ApiService {
         this.restTemplate = restTemplate;
     }
 
-    public void postFileContentsToServerDatabase(List<String> contents) {
-        contents.forEach(record -> {
+    public void postCustomersToRemote(List<CustomerDto> customers) {
+        customers.forEach(customer -> {
             var headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            var requestEntity = new HttpEntity<>(record, headers);
+            var requestEntity = new HttpEntity<>(customer, headers);
 
             restTemplate.postForObject(POST_URL, requestEntity, String.class);
         });
