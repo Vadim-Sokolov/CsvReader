@@ -36,7 +36,7 @@ class ApiServiceTest {
 
         // THEN
         Mockito.verify(restTemplate, Mockito.times(customers.size()))
-                .postForObject(eq(POST_URL), Mockito.any(HttpEntity.class), eq(String.class));
+                .postForEntity(eq(POST_URL), Mockito.any(HttpEntity.class), eq(CustomerDto.class));
 
     }
 

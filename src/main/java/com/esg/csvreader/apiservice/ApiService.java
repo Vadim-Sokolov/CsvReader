@@ -2,13 +2,16 @@ package com.esg.csvreader.apiservice;
 
 import com.esg.csvreader.PropertyLoader;
 import com.esg.csvreader.dto.CustomerDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class ApiService {
 
     private static final String POST_URL = PropertyLoader.PROPERTIES.getProperty("postEndPoint");
@@ -23,15 +26,31 @@ public class ApiService {
         this.restTemplate = restTemplate;
     }
 
-    public void postCustomersToRemote(List<CustomerDto> customers) {
+    public List<CustomerDto> postCustomersToRemote(List<CustomerDto> customers) {
+        List<CustomerDto> savedCustomers = new ArrayList<>();
+
+        log.debug("Processing customer list");
         customers.forEach(customer -> {
             var headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
+            log.debug("Creating new request entity");
             var requestEntity = new HttpEntity<>(customer, headers);
 
-            restTemplate.postForObject(POST_URL, requestEntity, String.class);
+            try {
+                log.debug("Posting to remote");
+                ResponseEntity<CustomerDto> responseEntity = restTemplate.postForEntity(POST_URL, requestEntity, CustomerDto.class);
+                if (responseEntity.getStatusCode().is2xxSuccessful()) {
+                    log.debug("Response successful");
+                    savedCustomers.add(responseEntity.getBody());
+                } else {
+                    log.error("Failed to save customer: " + customer.getCustomerRef() + ". Response: " + responseEntity);
+                }
+            } catch (Exception e) {
+                log.error("Error while processing customer: " + customer.getCustomerRef(), e);
+            }
         });
+        return savedCustomers;
     }
 
     public String getCustomerInformationByReferenceNumber(Integer refNumber) throws ApiServiceException {

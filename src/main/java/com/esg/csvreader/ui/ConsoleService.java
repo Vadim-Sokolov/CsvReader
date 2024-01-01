@@ -3,8 +3,7 @@ package com.esg.csvreader.ui;
 import com.esg.csvreader.CommandProcessor;
 import com.esg.csvreader.apiservice.ApiServiceException;
 import com.esg.csvreader.reader.CsvReaderException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +14,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class ConsoleService {
 
     private static final List<String> CONSOLE_COMMAND = ConsoleCommand.getAllCommandValues();
-    private static final Logger logger = LogManager.getLogger(ConsoleService.class);
     private final CommandProcessor commandProcessor;
     private final BufferedReader reader;
     private boolean keepRunning = true;
@@ -42,11 +41,11 @@ public class ConsoleService {
                 if (userInput == null || userInput.isEmpty()) {
                     continue;
                 }
-                logger.debug("Processing user input: " + userInput);
+                log.debug("Processing user input: " + userInput);
                 processUserInput(userInput);
             }
         } catch (Exception e) {
-            logger.error("Could not process user input: " + e.getMessage());
+            log.error("Could not process user input: " + e.getMessage());
             throw new UserInterfaceException("Could not process command: " + e.getMessage());
         } finally {
             reader.close();
@@ -72,43 +71,48 @@ public class ConsoleService {
     }
 
     private void commandNotRecognised(String userInput) {
-        logger.debug("Command not recognised: {} Printing available commands", userInput);
+        log.debug("Command not recognised: {} Printing available commands", userInput);
         System.out.println("Command not recognised: " + userInput);
         printListOfCommands();
     }
 
     private void readFile() {
-        logger.debug("Calling CommandProcessor readFile");
+        log.debug("Calling CommandProcessor readFile");
         try {
             commandProcessor.readFile().forEach(System.out::println);
         } catch (CsvReaderException e) {
-            logger.error("Could not read csv file: " + e.getMessage());
+            log.error("Could not read csv file: " + e.getMessage());
             System.out.println("Could not read csv file.");
             printListOfCommands();
         }
     }
 
     private void postToRemote() {
-        logger.debug("Calling CommandProcessor POST");
+        log.debug("Calling CommandProcessor POST");
         try {
-            commandProcessor.postContentToRemote();
+            var savedCustomers = commandProcessor.postContentToRemote();
+            if (!savedCustomers.isEmpty()) {
+                log.info("Successfully saved customers remotely: " + savedCustomers.size());
+            } else {
+                log.warn("No customers were saved remotely.");
+            }
         } catch (CsvReaderException e) {
-            logger.error("Could not read csv file: " + e.getMessage());
+            log.error("Could not read csv file: " + e.getMessage());
             System.out.println("Could not read csv file.");
             printListOfCommands();
         }
     }
 
     private void getCustomerByReference() {
-        logger.debug("Requesting user input for reference number");
+        log.debug("Requesting user input for reference number");
         System.out.println("Please enter Customer Id:");
         var customerIdOptional = getReferenceNumberFromConsole();
         if (customerIdOptional.isPresent()) {
-            logger.debug("Calling CommandProcessor GET");
+            log.debug("Calling CommandProcessor GET");
             try {
                 commandProcessor.getCustomerByReference(customerIdOptional.get());
             } catch (ApiServiceException e) {
-                logger.error("Could not get customer: " + e.getMessage());
+                log.error("Could not get customer: " + e.getMessage());
                 System.out.println("Could not get customer: " + e.getMessage());
                 printListOfCommands();
             }
@@ -118,14 +122,14 @@ public class ConsoleService {
     private Optional<Integer> getReferenceNumberFromConsole() {
         var input = "Input not found";
         try {
-            logger.debug("Expecting user input for reference number");
+            log.debug("Expecting user input for reference number");
             input = reader.readLine();
-            logger.debug("Attempting to parse user input to Integer");
+            log.debug("Attempting to parse user input to Integer");
             return Optional.of(Integer.parseInt(input));
         } catch (IOException | NumberFormatException e) {
-            logger.debug("Failed to get reference number for user input: " + input);
-            logger.debug("Exception type: " + e.getClass());
-            logger.debug("Exception message: " + e.getMessage());
+            log.debug("Failed to get reference number for user input: " + input);
+            log.debug("Exception type: " + e.getClass());
+            log.debug("Exception message: " + e.getMessage());
             System.out.println("Reference number should be an integer.");
             System.out.println("You have entered: " + input);
             printListOfCommands();
@@ -134,7 +138,7 @@ public class ConsoleService {
     }
 
     private void exitProgram() {
-        logger.debug("Exit command received. Exiting program.");
+        log.debug("Exit command received. Exiting program.");
         System.out.println("Exiting program");
         keepRunning = false;
     }

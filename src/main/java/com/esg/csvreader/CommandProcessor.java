@@ -5,16 +5,15 @@ import com.esg.csvreader.apiservice.ApiServiceException;
 import com.esg.csvreader.dto.CustomerDto;
 import com.esg.csvreader.reader.CsvReader;
 import com.esg.csvreader.reader.CsvReaderException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 public class CommandProcessor {
 
-    private static final Logger logger = LogManager.getLogger(CommandProcessor.class);
     private final CsvReader csvReader;
     private final ApiService apiService;
 
@@ -24,17 +23,17 @@ public class CommandProcessor {
     }
 
     public List<CustomerDto> readFile() throws CsvReaderException {
-        logger.debug("Calling CsvReader readCsvFile");
+        log.debug("Calling CsvReader readCsvFile");
         return csvReader.readCsvFile();
     }
 
-    public void postContentToRemote() throws CsvReaderException {
-        logger.debug("Calling ApiService POST");
-        apiService.postCustomersToRemote(csvReader.readCsvFile());
+    public List<CustomerDto> postContentToRemote() throws CsvReaderException {
+        log.debug("Calling ApiService POST");
+        return apiService.postCustomersToRemote(csvReader.readCsvFile());
     }
 
     public void getCustomerByReference(Integer referenceNumber) throws ApiServiceException {
-        logger.debug("Calling ApiService GET");
+        log.debug("Calling ApiService GET");
         apiService.getCustomerInformationByReferenceNumber(referenceNumber);
     }
 }
