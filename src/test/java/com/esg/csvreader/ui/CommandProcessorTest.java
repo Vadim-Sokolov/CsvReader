@@ -53,9 +53,9 @@ class CommandProcessorTest {
         var referenceNumber = 123;
 
         // WHEN
-        commandProcessor.getCustomerByReference(referenceNumber);
+        commandProcessor.getCustomerByReferenceNumber(referenceNumber);
 
         // THEN
-        verify(mockApiService, times(1)).getCustomerInformationByReferenceNumber(referenceNumber);
+        verify(mockApiService, times(1)).getCustomerByReferenceNumber(referenceNumber);
     }
 }

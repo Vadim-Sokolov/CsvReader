@@ -50,7 +50,7 @@ class ConsoleServiceTest {
         listener.listenToConsole();
 
         // THEN
-        verify(mockProcessor, times(1)).getCustomerByReference(33);
+        verify(mockProcessor, times(1)).getCustomerByReferenceNumber(33);
     }
 
     @Test

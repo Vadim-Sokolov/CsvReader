@@ -106,11 +106,11 @@ public class ConsoleService {
     private void getCustomerByReference() {
         log.debug("Requesting user input for reference number");
         System.out.println("Please enter Customer Id:");
-        var customerIdOptional = getReferenceNumberFromConsole();
-        if (customerIdOptional.isPresent()) {
+        var customerRefNumberOptional = getReferenceNumberFromConsole();
+        if (customerRefNumberOptional.isPresent()) {
             log.debug("Calling CommandProcessor GET");
             try {
-                commandProcessor.getCustomerByReference(customerIdOptional.get());
+                System.out.println(commandProcessor.getCustomerByReferenceNumber(customerRefNumberOptional.get()));
             } catch (ApiServiceException e) {
                 log.error("Could not get customer: " + e.getMessage());
                 System.out.println("Could not get customer: " + e.getMessage());

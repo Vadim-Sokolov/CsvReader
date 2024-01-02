@@ -32,8 +32,8 @@ public class CommandProcessor {
         return apiService.postCustomersToRemote(csvReader.readCsvFile());
     }
 
-    public void getCustomerByReference(Integer referenceNumber) throws ApiServiceException {
+    public CustomerDto getCustomerByReferenceNumber(Integer referenceNumber) throws ApiServiceException {
         log.debug("Calling ApiService GET");
-        apiService.getCustomerInformationByReferenceNumber(referenceNumber);
+        return apiService.getCustomerByReferenceNumber(referenceNumber);
     }
 }

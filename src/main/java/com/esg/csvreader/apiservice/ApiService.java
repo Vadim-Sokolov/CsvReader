@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class ApiService {
 
             try {
                 log.debug("Posting to remote");
-                ResponseEntity<CustomerDto> responseEntity = restTemplate.postForEntity(POST_URL, requestEntity, CustomerDto.class);
+                var responseEntity = restTemplate.postForEntity(POST_URL, requestEntity, CustomerDto.class);
                 if (responseEntity.getStatusCode().is2xxSuccessful()) {
                     log.debug("Response successful");
                     savedCustomers.add(responseEntity.getBody());
@@ -53,12 +54,15 @@ public class ApiService {
         return savedCustomers;
     }
 
-    public String getCustomerInformationByReferenceNumber(Integer refNumber) throws ApiServiceException {
+    public CustomerDto getCustomerByReferenceNumber(Integer refNumber) throws ApiServiceException {
 
-        var apiUrlWithId = GET_URL + "/{" + refNumber + "}";
+        var apiUrlWithId = UriComponentsBuilder.fromUriString(GET_URL)
+                .path("/{refNumber}")
+                .buildAndExpand(refNumber)
+                .toUriString();
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-                apiUrlWithId, HttpMethod.GET, null, String.class);
+        var responseEntity = restTemplate.exchange(
+                apiUrlWithId, HttpMethod.GET, null, CustomerDto.class);
 
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             return responseEntity.getBody();
